@@ -1,44 +1,31 @@
-# Dockerfile
-# Этап сборки
-FROM golang:1.23-alpine AS builder
+# Build stage
+FROM golang:1.23.9-alpine AS builder
 
-# Установка необходимых утилит
-RUN apk add --no-cache git
-
-# Рабочая директория
 WORKDIR /app
 
-# Копирование и загрузка зависимостей
-COPY go.mod go.sum ./
+# Copy go mod files
+COPY app/go.mod ./
+COPY app/go.sum ./
+
+# Download dependencies
 RUN go mod download
 
-# Копирование исходного кода
-COPY . .
+# Copy source code
+COPY app/*.go ./
 
-# Компиляция приложения
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o library .
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# Финальный образ
-FROM alpine:3.18
+# Final stage
+FROM alpine:latest
 
-# Установка зависимостей
-RUN apk add --no-cache ca-certificates tzdata
+WORKDIR /root/
 
-# Создание непривилегированного пользователя
-RUN adduser -D -g '' appuser
+# Copy the binary from builder
+COPY --from=builder /app/main .
 
-# Копирование бинарного файла из этапа сборки
-WORKDIR /app
-COPY --from=builder /app/library .
-
-# Установка прав
-RUN chown -R appuser:appuser /app
-
-# Переключение на непривилегированного пользователя
-USER appuser
-
-# Открытие порта
+# Expose port 8080
 EXPOSE 8080
 
-# Команда запуска
-CMD ["./main"]
+# Command to run the application
+CMD ["./main"] 
