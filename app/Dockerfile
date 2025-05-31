@@ -1,7 +1,7 @@
 FROM golang:1.20-alpine
 
-ENTRYPOINT ["/app/main"]
-WORKDIR /app
+ENTRYPOINT ["/main"]
+WORKDIR /main
 COPY . .
 RUN go mod download
 RUN go build -o main .
