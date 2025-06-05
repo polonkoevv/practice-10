@@ -99,7 +99,10 @@ jobs:
             kubectl apply -f service.yaml
             sleep 10
             minikube service go-app-service
-            nohup kubectl port-forward --address 0.0.0.0 service/go-app-service 8080:80 > port-forward.log 2>&1 & 
+            # Убиваем все процессы, использующие порт 5555
+            lsof -ti:5555 | xargs -r kill -9
+            # Запускаем port-forward
+            nohup kubectl port-forward --address 0.0.0.0 service/go-app-service 5555:80 > port-forward.log 2>&1 & 
             sleep 5  # Даем время на запуск port-forward
             # Проверяем, что процесс запущен
             ps aux | grep "[p]ort-forward"
