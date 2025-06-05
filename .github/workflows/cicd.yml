@@ -97,6 +97,7 @@ jobs:
             kubectl delete service go-app-service
             kubectl apply -f deployment.yaml
             kubectl apply -f service.yaml
+            sleep 1000 
             minikube service go-app-service
             kubectl port-forward --address 0.0.0.0 service/go-app-service 8080:80 &
             # nohup kubectl port-forward --address 0.0.0.0 service/go-app-service 8080:80 > port-forward.log 2>&1 &
