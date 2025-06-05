@@ -91,6 +91,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            mkdir -p ~/pr10
+            cd ~/pr10
             kubectl delete deployment go-app
             kubectl delete service go-app-service
             kubectl apply -f deployment.yaml
