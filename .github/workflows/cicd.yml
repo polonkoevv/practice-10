@@ -106,8 +106,3 @@ jobs:
             sleep 5  # Даем время на запуск port-forward
             # Проверяем, что процесс запущен
             ps aux | grep "[p]ort-forward"
-  
-
-
-
-
